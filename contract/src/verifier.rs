@@ -5,13 +5,22 @@ use borsh::{BorshDeserialize, BorshSerialize};
 use near_sdk::serde::Deserialize;
 use serde_json_wasm;
 use std::str::FromStr;
-use thiserror::Error;
+use std::fmt;
 
-#[derive(Error, Debug)]
+#[derive(Debug)]
 pub enum VerifierError {
-    #[error("Failed to parse circom {0} json")]
     ParseError(String),
 }
+
+impl fmt::Display for VerifierError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            VerifierError::ParseError(msg) => write!(f, "Failed to parse circom {} json", msg),
+        }
+    }
+}
+
+impl std::error::Error for VerifierError {}
 
 #[derive(BorshSerialize, BorshDeserialize, Debug, PartialEq, Clone)]
 struct BigInteger256 {
